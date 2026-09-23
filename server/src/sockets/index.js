@@ -9,6 +9,9 @@ export const initSocket = (server) => {
     },
   });
 
+  // Store globally for jobs and controllers
+  global.io = io;
+
   io.use((socket, next) => {
     try {
       const token =
@@ -55,10 +58,6 @@ export const initSocket = (server) => {
       console.log(`❌ Socket disconnected: ${socket.user._id}`);
     });
   });
-
-  // Make io available in controllers
-  const app = server._events.request;
-  if (app) app.set("io", io);
 
   return io;
 };

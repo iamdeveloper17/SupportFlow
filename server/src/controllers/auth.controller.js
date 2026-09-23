@@ -23,7 +23,16 @@ export const register = asyncHandler(async (req, res) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) throw new ApiError(409, "Email already registered");
 
-  // Create workspace
+  // 1. User pehle banao (workspace ke bina)
+  const user = await User.create({
+    name,
+    email,
+    password,
+    role: "admin",
+    workspace: null,
+  });
+
+  // 2. Ab workspace banao (owner ke saath)
   let slug = slugify(workspaceName);
   const slugExists = await Workspace.findOne({ slug });
   if (slugExists) slug = `${slug}-${Date.now().toString().slice(-4)}`;
@@ -31,20 +40,14 @@ export const register = asyncHandler(async (req, res) => {
   const workspace = await Workspace.create({
     name: workspaceName,
     slug,
+    owner: user._id, // ✅ owner ab diya
   });
 
-  // Create admin user
-  const user = await User.create({
-    name,
-    email,
-    password,
-    role: "admin",
-    workspace: workspace._id,
-  });
+  // 3. User ko workspace se link karo
+  user.workspace = workspace._id;
+  await user.save();
 
-  workspace.owner = user._id;
-  await workspace.save();
-
+  // 4. Tokens generate karo
   const accessToken = generateAccessToken({
     _id: user._id,
     role: user.role,
@@ -55,6 +58,11 @@ export const register = asyncHandler(async (req, res) => {
   user.refreshToken = refreshToken;
   await user.save();
 
+  // 5. Response bhejo
+  const userResponse = await User.findById(user._id)
+    .select("-password -refreshToken")
+    .populate("workspace");
+
   res
     .status(201)
     .cookie("accessToken", accessToken, cookieOptions)
@@ -62,7 +70,7 @@ export const register = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         201,
-        { user, workspace, accessToken },
+        { user: userResponse, workspace, accessToken },
         "Registration successful"
       )
     );

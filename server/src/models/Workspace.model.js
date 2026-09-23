@@ -15,6 +15,12 @@ const workspaceSchema = new mongoose.Schema(
       slaHours: { type: Number, default: 24 },
       autoAssign: { type: Boolean, default: false },
     },
+    subscription: {
+      stripeCustomerId: { type: String, default: null },
+      stripeSubscriptionId: { type: String, default: null },
+      status: { type: String, default: "active" },
+      currentPeriodEnd: { type: Date, default: null },
+    },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

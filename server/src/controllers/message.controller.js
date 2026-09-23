@@ -3,6 +3,8 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import Message from "../models/Message.model.js";
 import Ticket from "../models/Ticket.model.js";
+import User from "../models/User.model.js";
+import { queueEmail } from "../jobs/queue.js";
 
 export const getMessages = asyncHandler(async (req, res) => {
   const ticket = await Ticket.findOne({
@@ -43,28 +45,42 @@ export const sendMessage = asyncHandler(async (req, res) => {
     isInternalNote: isInternalNote || false,
   });
 
-  // Mark first response
-  if (
-    !ticket.firstResponseAt &&
-    req.user.role !== "customer"
-  ) {
+  if (!ticket.firstResponseAt && req.user.role !== "customer") {
     ticket.firstResponseAt = new Date();
     await ticket.save();
   }
 
   const populated = await message.populate("sender", "name email avatar role");
 
-  // Emit to socket room
-  const io = req.app.get("io");
+  const io = req.app.get("io") || global.io;
   if (io) {
     io.to(`ticket:${ticket._id}`).emit("message:new", populated);
+  }
+
+  // 🔥 Phase 5: Email notification to other party
+  try {
+    const recipientId =
+      req.user.role === "customer" ? ticket.assignedTo : ticket.customer;
+
+    if (recipientId && !isInternalNote) {
+      const recipient = await User.findById(recipientId);
+      if (recipient && recipient._id.toString() !== req.user._id.toString()) {
+        queueEmail("new-message", {
+          ticket,
+          recipient,
+          sender: req.user,
+          preview: content,
+        }).catch(console.error);
+      }
+    }
+  } catch (err) {
+    console.error("Notification error:", err.message);
   }
 
   res.status(201).json(new ApiResponse(201, { message: populated }, "Message sent"));
 });
 
 export const getAgents = asyncHandler(async (req, res) => {
-  const User = (await import("../models/User.model.js")).default;
   const agents = await User.find({
     workspace: req.user.workspace,
     role: { $in: ["admin", "agent"] },

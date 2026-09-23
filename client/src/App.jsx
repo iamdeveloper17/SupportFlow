@@ -11,6 +11,8 @@ import TicketList from "./pages/tickets/TicketList.jsx";
 import CreateTicket from "./pages/tickets/CreateTicket.jsx";
 import TicketDetail from "./pages/tickets/TicketDetail.jsx";
 import Agents from "./pages/agents/Agents.jsx";
+import Analytics from "./pages/analytics/Analytics.jsx";
+import Billing from "./pages/billing/Billing.jsx";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -54,6 +56,22 @@ export default function App() {
           element={
             <ProtectedRoute roles={["admin", "agent"]}>
               <Agents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute roles={["admin", "agent"]}>
+              <Analytics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/billing"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <Billing />
             </ProtectedRoute>
           }
         />

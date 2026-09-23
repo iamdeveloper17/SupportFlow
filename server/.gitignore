@@ -1,4 +1,7 @@
+# Dependencies
 node_modules/
+
+# Environment
 .env
 .env.*
 !.env.example
@@ -20,6 +23,3 @@ build/
 # IDE
 .vscode/
 .idea/
-
-# Docker
-.dockerignore

@@ -4,11 +4,17 @@ import Sidebar from "./Sidebar.jsx";
 
 export default function DashboardLayout() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen flex flex-col overflow-hidden bg-gray-50">
+      {/* Fixed Navbar */}
       <Navbar />
-      <div className="flex">
+
+      {/* Body: sidebar + content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Fixed Sidebar */}
         <Sidebar />
-        <main className="flex-1 p-6 overflow-auto">
+
+        {/* Scrollable Content */}
+        <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>
       </div>

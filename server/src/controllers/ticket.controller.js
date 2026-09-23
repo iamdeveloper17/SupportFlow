@@ -5,8 +5,8 @@ import Ticket from "../models/Ticket.model.js";
 import User from "../models/User.model.js";
 import Workspace from "../models/Workspace.model.js";
 import Message from "../models/Message.model.js";
+import { queueEmail, scheduleSLA, slaQueue } from "../jobs/queue.js";
 
-// Generate ticket number per workspace
 const generateTicketNumber = async (workspaceId) => {
   const count = await Ticket.countDocuments({ workspace: workspaceId });
   return `TKT-${String(count + 1).padStart(4, "0")}`;
@@ -37,7 +37,6 @@ export const createTicket = asyncHandler(async (req, res) => {
     slaDeadline,
   });
 
-  // initial message = description
   await Message.create({
     ticket: ticket._id,
     workspace: workspaceId,
@@ -45,10 +44,16 @@ export const createTicket = asyncHandler(async (req, res) => {
     content: description,
   });
 
+  // 🔥 Phase 5: Queue email + SLA
+  queueEmail("ticket-created", { ticket, customer: req.user }).catch(console.error);
+  if (slaDeadline) {
+    scheduleSLA(ticket._id, slaDeadline).catch(console.error);
+  }
+
   res.status(201).json(new ApiResponse(201, { ticket }, "Ticket created"));
 });
 
-// LIST (role-aware)
+// LIST
 export const getTickets = asyncHandler(async (req, res) => {
   const workspaceId = req.user.workspace;
   const { status, priority, assignedTo, search, page = 1, limit = 20 } = req.query;
@@ -147,6 +152,22 @@ export const updateTicket = asyncHandler(async (req, res) => {
     .populate("customer", "name email avatar")
     .populate("assignedTo", "name email avatar");
 
+  // 🔥 Phase 5: Notify agent + cancel SLA if resolved
+  if (assignedTo && assignedTo !== "null") {
+    const agent = await User.findById(assignedTo);
+    if (agent) {
+      queueEmail("ticket-assigned", {
+        ticket: updated,
+        agent,
+        customer: updated.customer,
+      }).catch(console.error);
+    }
+  }
+
+  if (["resolved", "closed"].includes(ticket.status)) {
+    await slaQueue.remove(`sla-${ticket._id}`).catch(() => {});
+  }
+
   res.status(200).json(new ApiResponse(200, { ticket: updated }, "Ticket updated"));
 });
 
@@ -164,7 +185,7 @@ export const deleteTicket = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Ticket deleted"));
 });
 
-// STATS (for dashboard)
+// STATS
 export const getTicketStats = asyncHandler(async (req, res) => {
   const workspaceId = req.user.workspace;
 
@@ -190,5 +211,118 @@ export const getTicketStats = asyncHandler(async (req, res) => {
 
   res.status(200).json(
     new ApiResponse(200, { byStatus: stats, byPriority: priorityStats }, "Stats fetched")
+  );
+});
+
+// 🔥 Phase 6: ADVANCED ANALYTICS
+export const getAnalytics = asyncHandler(async (req, res) => {
+  const workspaceId = req.user.workspace;
+  const days = Number(req.query.days) || 30;
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  const [trend, byAgent, avgResponse, categoryDist, recentActivity] =
+    await Promise.all([
+      Ticket.aggregate([
+        {
+          $match: {
+            workspace: workspaceId,
+            createdAt: { $gte: since },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+            },
+            created: { $sum: 1 },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ]),
+
+      Ticket.aggregate([
+        {
+          $match: {
+            workspace: workspaceId,
+            assignedTo: { $ne: null },
+          },
+        },
+        {
+          $group: {
+            _id: "$assignedTo",
+            total: { $sum: 1 },
+            resolved: {
+              $sum: { $cond: [{ $eq: ["$status", "resolved"] }, 1, 0] },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "_id",
+            foreignField: "_id",
+            as: "agent",
+          },
+        },
+        { $unwind: "$agent" },
+        {
+          $project: {
+            name: "$agent.name",
+            total: 1,
+            resolved: 1,
+          },
+        },
+      ]),
+
+      Ticket.aggregate([
+        {
+          $match: {
+            workspace: workspaceId,
+            firstResponseAt: { $ne: null },
+          },
+        },
+        {
+          $project: {
+            diff: {
+              $divide: [
+                { $subtract: ["$firstResponseAt", "$createdAt"] },
+                1000 * 60 * 60,
+              ],
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            avgHours: { $avg: "$diff" },
+          },
+        },
+      ]),
+
+      Ticket.aggregate([
+        { $match: { workspace: workspaceId } },
+        { $group: { _id: "$category", count: { $sum: 1 } } },
+      ]),
+
+      Ticket.find({ workspace: workspaceId })
+        .populate("customer", "name")
+        .populate("assignedTo", "name")
+        .sort("-updatedAt")
+        .limit(5)
+        .select("ticketNumber subject status priority updatedAt customer assignedTo"),
+    ]);
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        trend,
+        byAgent,
+        avgResponseHours: avgResponse[0]?.avgHours?.toFixed(2) || 0,
+        categoryDist,
+        recentActivity,
+      },
+      "Analytics fetched"
+    )
   );
 });

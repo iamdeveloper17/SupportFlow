@@ -6,6 +6,7 @@ import api from "../../api/axios.js";
 import { fetchTicket, updateTicket } from "../../features/tickets/ticketSlice.js";
 import { useAuth } from "../../hooks/useAuth.js";
 import { useSocket } from "../../hooks/useSocket.js";
+import FileUpload from "../../components/common/FileUpload.jsx";
 
 export default function TicketDetail() {
   const { id } = useParams();
@@ -67,7 +68,7 @@ export default function TicketDetail() {
       setNewMessage("");
       setIsInternal(false);
     } catch (err) {
-      toast.error("Failed to send");
+      toast.error(err.response?.data?.message || "Failed to send");
     } finally {
       setSending(false);
     }
@@ -104,7 +105,8 @@ export default function TicketDetail() {
             </div>
             <h1 className="text-xl font-bold">{ticket.subject}</h1>
             <p className="text-sm text-gray-500 mt-1">
-              by {ticket.customer?.name} · {new Date(ticket.createdAt).toLocaleString()}
+              by {ticket.customer?.name} ·{" "}
+              {new Date(ticket.createdAt).toLocaleString()}
             </p>
           </div>
 
@@ -166,20 +168,27 @@ export default function TicketDetail() {
             onChange={(e) => setNewMessage(e.target.value)}
           />
           <div className="flex items-center justify-between">
-            {canUpdate && (
-              <label className="flex items-center gap-2 text-sm text-gray-600">
-                <input
-                  type="checkbox"
-                  checked={isInternal}
-                  onChange={(e) => setIsInternal(e.target.checked)}
-                />
-                Internal note (agents only)
-              </label>
-            )}
+            <div className="flex items-center gap-4">
+              {canUpdate && (
+                <label className="flex items-center gap-2 text-sm text-gray-600">
+                  <input
+                    type="checkbox"
+                    checked={isInternal}
+                    onChange={(e) => setIsInternal(e.target.checked)}
+                  />
+                  Internal note
+                </label>
+              )}
+              <FileUpload
+                onUploaded={(f) =>
+                  setNewMessage((m) => `${m}\n📎 ${f.name}: ${f.url}`)
+                }
+              />
+            </div>
             <button
               type="submit"
               disabled={sending || !newMessage.trim()}
-              className="btn-primary ml-auto"
+              className="btn-primary"
             >
               {sending ? "Sending..." : "Send"}
             </button>

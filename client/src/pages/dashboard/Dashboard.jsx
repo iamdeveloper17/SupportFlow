@@ -79,16 +79,19 @@ export default function Dashboard() {
       </div>
 
       <div className="card">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold">Quick Actions</h2>
-        </div>
-        <div className="flex gap-3">
+        <h2 className="font-semibold mb-4">Quick Actions</h2>
+        <div className="flex gap-3 flex-wrap">
           <Link to="/tickets/new" className="btn-primary">
             ➕ Create Ticket
           </Link>
           <Link to="/tickets" className="btn-secondary">
             View All Tickets
           </Link>
+          {user?.role !== "customer" && (
+            <Link to="/analytics" className="btn-secondary">
+              📈 Analytics
+            </Link>
+          )}
         </div>
       </div>
     </div>
