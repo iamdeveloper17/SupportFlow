@@ -1,15 +1,3 @@
-
-## 🚀 Live Demo
-
-- **Frontend:** [https://support-flow-gamma.vercel.app](https://support-flow-gamma.vercel.app)
-- **Backend API:** [https://supportflow-7avd.onrender.com/health](https://supportflow-7avd.onrender.com/health)
-
-### Demo Credentials
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | amitsir1355@gmail.com | 123456 |
-
-
 # 🎫 SupportFlow — Multi-Tenant SaaS Helpdesk
 
 A production-ready, multi-tenant helpdesk platform where companies can manage customer tickets, chat in real-time, and analyze performance — all with subscription-based billing.
@@ -22,6 +10,20 @@ A production-ready, multi-tenant helpdesk platform where companies can manage cu
 [![MongoDB](https://img.shields.io/badge/MongoDB-8-green?logo=mongodb)](https://mongodb.com)
 [![React](https://img.shields.io/badge/React-18-blue?logo=react)](https://react.dev)
 [![Redis](https://img.shields.io/badge/Redis-7-red?logo=redis)](https://redis.io)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-success?logo=vercel)](https://support-flow-gamma.vercel.app)
+
+## 🚀 Live Demo
+
+- **Frontend:** [https://support-flow-gamma.vercel.app](https://support-flow-gamma.vercel.app)
+- **Backend API:** [https://supportflow-7avd.onrender.com/health](https://supportflow-7avd.onrender.com/health)
+
+### 🔑 Demo Credentials
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | amitsir1355@gmail.com | 123456 |
+
+> ⚠️ **Note:** Backend runs on Render's free tier — the first request may take 30-50 seconds (cold start). This is normal.
 
 ## 📖 About
 
@@ -44,42 +46,113 @@ Every workspace is fully isolated: users, tickets, messages, and analytics are s
 - 📎 **File uploads** via Cloudinary
 - 🔍 **Search, filter, pagination**
 - 🎨 **Modern UI** with TailwindCSS
+- 📱 **Fully responsive** — mobile, tablet, and desktop
 - 🐳 **Docker** + GitHub Actions CI/CD
+
+## 🎯 How to Use
+
+### 👨‍💼 For Admins (Company Owners)
+
+1. **Sign up** — Create your workspace with your company name
+2. **Invite agents** — Add team members to handle tickets
+3. **Monitor tickets** — Track all customer tickets in your workspace
+4. **Assign tickets** — Route tickets to the right agent
+5. **Chat in real-time** — Reply to customers instantly with live chat
+6. **Track SLA** — Get alerts before deadlines breach
+7. **View analytics** — Analyze ticket trends, agent performance, response times
+8. **Manage billing** — Upgrade plans via Stripe integration
+
+### 👨‍💻 For Agents (Support Team)
+
+1. **View assigned tickets** — See all tickets routed to you
+2. **Reply to customers** — Send public replies visible to customers
+3. **Add internal notes** — Collaborate with team (customers can't see these)
+4. **Update status** — Mark tickets as Open → Pending → Resolved → Closed
+5. **View performance** — Track your metrics on analytics dashboard
+
+### 👤 For Customers
+
+1. **Raise a ticket** — Describe your issue in detail
+2. **Chat in real-time** — Get instant replies from support agents
+3. **Track status** — See real-time updates on your tickets
+4. **Attach files** — Share screenshots or documents
+5. **Get email updates** — Notifications on every reply
 
 ## 📸 Screenshots
 
-### 🔐 Login & Register — Multi-tenant signup
+### 🔐 Authentication
+
 | Login | Register |
 |-------|----------|
 | ![Login](./screenshots/login.png) | ![Register](./screenshots/register.png) |
 
 ### 📊 Dashboard — Overview of tickets and stats
+
 ![Dashboard](./screenshots/dashboard.png)
 
-### 🎫 New Ticket — Create and assign
-![New Ticket](./screenshots/new-ticket.png)
+### 🎫 Tickets
 
-### 💬 Ticket Detail — Real-time chat + internal notes
+**Ticket List:**
+![Ticket List](./screenshots/ticket-list.png)
+
+**Ticket Detail with Real-time Chat:**
 ![Ticket Detail](./screenshots/ticket-detail.png)
 
-### 📈 Analytics — Performance insights
+**Create New Ticket:**
+![New Ticket](./screenshots/new-ticket.png)
+
+### 📈 Analytics — Performance Insights
+
 ![Analytics](./screenshots/analytics.png)
 
-### 👥 Agents — Team management
+### 💳 Billing — Subscription Plans
+
+![Billing](./screenshots/billing.png)
+
+### 👥 Agents — Team Management
+
 ![Agents](./screenshots/agents.png)
 
-### 💳 Billing — Subscription plans
-![Billing](./screenshots/billing.png)
+## 📱 Responsive Design
+
+SupportFlow is **fully responsive** — works seamlessly across all devices.
+
+### 📱 Mobile View (375px)
+
+<p align="center">
+  <img src="./screenshots/mobile-login.png" width="200" alt="Mobile Login" />
+  <img src="./screenshots/mobile-register.png" width="200" alt="Mobile Register" />
+  <img src="./screenshots/mobile-dashboard.png" width="200" alt="Mobile Dashboard" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/mobile-tickets.png" width="200" alt="Mobile Tickets" />
+  <img src="./screenshots/mobile-create-ticket.png" width="200" alt="Mobile Create Ticket" />
+  <img src="./screenshots/mobile-analytics.png" width="200" alt="Mobile Analytics" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/mobile-navbar.png" width="200" alt="Mobile Navbar" />
+  <img src="./screenshots/mobile-billing.png" width="200" alt="Mobile Billing" />
+</p>
+
+**Mobile Features:**
+- 📱 Slide-in sidebar drawer with overlay
+- 👆 Touch-friendly tap targets (min 44px)
+- 📊 Responsive charts that adapt to screen size
+- 🎨 Adaptive grid layouts (1-col mobile → 4-col desktop)
+- ✨ Fluid typography that scales with viewport
+- 🚫 Body scroll lock when drawer is open
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 - **React 18** + Vite
-- **Redux Toolkit** for state
+- **Redux Toolkit** for state management
 - **React Router v6** for routing
 - **TailwindCSS** for styling
-- **Recharts** for charts
-- **Socket.io Client** for real-time
+- **Recharts** for data visualization
+- **Socket.io Client** for real-time communication
 - **Axios** with interceptors for auto-refresh tokens
 
 ### Backend
@@ -89,18 +162,18 @@ Every workspace is fully isolated: users, tickets, messages, and analytics are s
 - **Socket.io** for real-time messaging
 - **JWT** with refresh token rotation
 - **Zod** for request validation
-- **Nodemailer** for emails
-- **Stripe** for billing
+- **Nodemailer** for transactional emails
+- **Stripe** for subscription billing
 - **Cloudinary** for file uploads
 - **Helmet, CORS, Rate-limit** for security
 
 ### DevOps
 - **Docker** + docker-compose
-- **GitHub Actions** for CI
+- **GitHub Actions** for CI/CD
 - **Render** for backend deployment
 - **Vercel** for frontend deployment
 - **MongoDB Atlas** for cloud database
-- **Upstash Redis** for cloud cache
+- **Upstash Redis** for cloud cache & queues
 
 ## 🏗️ Architecture
 
@@ -121,6 +194,7 @@ Every workspace is fully isolated: users, tickets, messages, and analytics are s
 ## 🚀 Local Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - MongoDB (local or [Atlas](https://cloud.mongodb.com))
 - Redis (local, [Memurai](https://memurai.com), or [Upstash](https://upstash.com))
@@ -129,12 +203,14 @@ Every workspace is fully isolated: users, tickets, messages, and analytics are s
 - Cloudinary account — optional
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/iamdeveloper17/SupportFlow.git
 cd SupportFlow
 ```
 
 ### 2. Backend setup
+
 ```bash
 cd server
 npm install
@@ -146,6 +222,7 @@ npm run dev
 Server will run on `http://localhost:5000`
 
 ### 3. Frontend setup
+
 ```bash
 cd ../client
 npm install
@@ -156,6 +233,7 @@ npm run dev
 Client will run on `http://localhost:5173`
 
 ### 4. Open the app
+
 Navigate to `http://localhost:5173/register` and create your first workspace.
 
 ## 🔑 Environment Variables
@@ -163,7 +241,7 @@ Navigate to `http://localhost:5173/register` and create your first workspace.
 See `server/.env.example` and `client/.env.example` for the full list. Key variables:
 
 | Variable | Description | Required |
-|----------|-------------|----------|
+|----------|-------------|:--------:|
 | `MONGO_URI` | MongoDB connection string | ✅ |
 | `REDIS_URL` | Redis connection string | ✅ |
 | `JWT_ACCESS_SECRET` | JWT signing secret (32+ chars) | ✅ |
@@ -179,12 +257,12 @@ See `server/.env.example` and `client/.env.example` for the full list. Key varia
 SupportFlow/
 ├── client/                     # React frontend
 │   ├── src/
-│   │   ├── api/                # Axios config
+│   │   ├── api/                # Axios config with auto-refresh
 │   │   ├── app/                # Redux store
 │   │   ├── features/           # Redux slices
 │   │   ├── components/         # UI components
 │   │   ├── pages/              # Route pages
-│   │   ├── hooks/              # Custom hooks
+│   │   ├── hooks/              # Custom hooks (useSocket, useAuth)
 │   │   └── routes/             # Route guards
 │   └── package.json
 ├── server/                     # Node backend
@@ -200,25 +278,40 @@ SupportFlow/
 │   │   ├── validators/         # Zod schemas
 │   │   └── utils/              # Helpers
 │   └── server.js
-├── screenshots/                # README images
+├── screenshots/                # Desktop & mobile screenshots
+├── .github/workflows/          # GitHub Actions CI
 ├── docker-compose.yml
+├── LICENSE
 └── README.md
 ```
 
 ## 🎯 Roadmap
 
-- [x] Multi-tenancy
-- [x] JWT auth + RBAC
-- [x] Ticket CRUD
-- [x] Real-time chat
-- [x] Email notifications
-- [x] SLA tracking
-- [x] Analytics dashboard
-- [x] Stripe billing
-- [x] File uploads
+- [x] Multi-tenancy with isolated workspaces
+- [x] JWT auth + refresh token rotation
+- [x] Role-based access control (4 roles)
+- [x] Complete ticket CRUD lifecycle
+- [x] Real-time chat (Socket.io + Redis adapter)
+- [x] Email notifications (Nodemailer)
+- [x] SLA tracking (BullMQ delayed jobs)
+- [x] Analytics dashboard (MongoDB aggregation)
+- [x] Stripe subscription billing
+- [x] Cloudinary file uploads
+- [x] Docker + GitHub Actions CI
+- [x] Fully responsive design (mobile-first)
 - [ ] WhatsApp integration
 - [ ] Mobile app (React Native)
 - [ ] AI-powered ticket categorization
+
+## 💡 Technical Highlights
+
+- **Cross-domain cookies** — `SameSite=None` + `Secure` + CORS credentials handling for Vercel + Render split deployment
+- **JWT expiry handling** — auto-refresh via Axios interceptor with retry queue and refresh token rotation
+- **Duplicate message prevention** — ID deduplication + Socket.io `.except()` to exclude sender from broadcast
+- **Multi-tenant isolation** — compound indexes on `workspace` field for query performance
+- **Real-time scaling** — Socket.io with Redis adapter for multi-instance support
+- **Case-sensitive CI fix** — proper file naming conventions for Linux compatibility
+- **Mobile-first design** — slide-in drawer, adaptive grids, touch-friendly components
 
 ## 🤝 Contributing
 
@@ -233,7 +326,7 @@ This project is licensed under the MIT License — see the [LICENSE](./LICENSE) 
 **Amit Kumar**
 
 - GitHub: [@iamdeveloper17](https://github.com/iamdeveloper17)
-- LinkedIn: [Your LinkedIn](https://www.linkedin.com/in/amit-kumar-9193b0216?utm_source=share_via&utm_content=profile&utm_medium=member_android)
+- LinkedIn: [@amit-kumar-9193b0216](https://www.linkedin.com/in/amit-kumar-9193b0216)
 - Email: ramit5752@gmail.com
 
 ---
