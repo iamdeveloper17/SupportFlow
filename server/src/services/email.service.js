@@ -1,14 +1,40 @@
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// ✅ Lazy create transporter — jab pehla email bheja jaye
+let transporter = null;
+
+const getTransporter = () => {
+  if (transporter) return transporter;
+
+  console.log("🔍 Creating SMTP Transporter:");
+  console.log("   HOST:", process.env.SMTP_HOST);
+  console.log("   PORT:", process.env.SMTP_PORT);
+  console.log("   USER:", process.env.SMTP_USER);
+  console.log("   PASS set:", !!process.env.SMTP_PASS);
+
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.error("❌ SMTP credentials missing in .env");
+    return null;
+  }
+
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: false, // true for port 465, false for 587
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
+  });
+
+  return transporter;
+};
 
 const baseTemplate = (title, content, ctaText, ctaUrl) => `
 <!DOCTYPE html>
@@ -41,7 +67,13 @@ const baseTemplate = (title, content, ctaText, ctaUrl) => `
 
 export const sendEmail = async ({ to, subject, html }) => {
   try {
-    await transporter.sendMail({
+    const mailer = getTransporter();
+    if (!mailer) {
+      console.log("⚠️  Skipping email — SMTP not configured");
+      return;
+    }
+
+    await mailer.sendMail({
       from: process.env.EMAIL_FROM,
       to,
       subject,
