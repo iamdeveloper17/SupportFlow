@@ -1,3 +1,15 @@
+
+## 🚀 Live Demo
+
+- **Frontend:** [https://support-flow-gamma.vercel.app](https://support-flow-gamma.vercel.app)
+- **Backend API:** [https://supportflow-7avd.onrender.com/health](https://supportflow-7avd.onrender.com/health)
+
+### Demo Credentials
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | ramit5752@gmail.com | 123456 |
+
+
 # 🎫 SupportFlow — Multi-Tenant SaaS Helpdesk
 
 A production-ready, multi-tenant helpdesk platform where companies can manage customer tickets, chat in real-time, and analyze performance — all with subscription-based billing.
