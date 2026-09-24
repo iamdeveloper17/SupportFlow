@@ -7,7 +7,7 @@
 ### Demo Credentials
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | ramit5752@gmail.com | 123456 |
+| Admin | amitsir1355@gmail.com | 123456 |
 
 
 # 🎫 SupportFlow — Multi-Tenant SaaS Helpdesk
