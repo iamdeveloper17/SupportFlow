@@ -5,28 +5,40 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Separate axios instance for refresh (without interceptor)
+const refreshClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+});
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config;
+
+    // ✅ Sirf 401 pe retry, aur refresh endpoint pe nahi
     if (
       error.response?.status === 401 &&
       !original._retry &&
-      !original.url.includes("/auth/")
+      !original.url?.includes("/auth/refresh") &&
+      !original.url?.includes("/auth/login") &&
+      !original.url?.includes("/auth/register")
     ) {
       original._retry = true;
+
       try {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
+        await refreshClient.post("/auth/refresh");
+        // ✅ Refresh successful — original request retry karo
         return api(original);
       } catch (refreshError) {
-        window.location.href = "/login";
+        // Refresh bhi fail — logout karo
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );

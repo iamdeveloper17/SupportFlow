@@ -28,50 +28,116 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-blue-100 p-4">
-      <div className="card w-full max-w-md">
-        <div className="text-center mb-6">
-          <div className="w-14 h-14 bg-primary-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3">
-            S
+    <div className="min-h-screen flex">
+      {/* Left: Brand (desktop only) */}
+      <div className="hidden lg:flex lg:w-1/2 gradient-primary relative overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
+
+        <div className="relative flex flex-col justify-between p-12 w-full">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <span className="text-xl font-bold text-white">SupportFlow</span>
           </div>
-          <h1 className="text-2xl font-bold">Welcome back</h1>
-          <p className="text-gray-500 text-sm mt-1">Login to SupportFlow</p>
+
+          <div>
+            <h1 className="text-4xl font-bold text-white leading-tight mb-4">
+              Modern helpdesk
+              <br />
+              for modern teams.
+            </h1>
+            <p className="text-white/80 text-lg max-w-md leading-relaxed">
+              Manage tickets, chat with customers in real-time, and analyze
+              performance — all in one place.
+            </p>
+
+            <div className="flex flex-wrap gap-4 mt-8">
+              {["Real-time chat", "Multi-tenant", "Analytics"].map((f) => (
+                <div key={f} className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-300" />
+                  <span className="text-sm text-white/90 font-medium">{f}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-white/60 text-sm">
+            © {new Date().getFullYear()} SupportFlow. All rights reserved.
+          </p>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="text-sm font-medium mb-1 block">Email</label>
-            <input
-              type="email"
-              required
-              className="input"
-              placeholder="you@example.com"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
+      {/* Right: Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 bg-surface-50">
+        <div className="w-full max-w-md animate-fade-in">
+          <div className="lg:hidden flex items-center gap-3 justify-center mb-6">
+            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <span className="text-xl font-bold text-surface-900">
+              SupportFlow
+            </span>
           </div>
-          <div>
-            <label className="text-sm font-medium mb-1 block">Password</label>
-            <input
-              type="password"
-              required
-              className="input"
-              placeholder="••••••"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-            />
-          </div>
-          <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
 
-        <p className="text-center text-sm text-gray-600 mt-6">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-primary-600 font-medium hover:underline">
-            Register
-          </Link>
-        </p>
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-surface-900 mb-2">
+              Welcome back
+            </h2>
+            <p className="text-sm text-surface-500">
+              Sign in to your workspace to continue
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+            <div>
+              <label className="input-label">Email</label>
+              <input
+                type="email"
+                required
+                className="input"
+                placeholder="you@example.com"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="input-label">Password</label>
+              <input
+                type="password"
+                required
+                className="input"
+                placeholder="••••••••"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full py-3"
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+          </form>
+
+          <p className="text-center text-sm text-surface-500 mt-6">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-primary-600 font-semibold hover:text-primary-700"
+            >
+              Create one
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
