@@ -15,8 +15,23 @@ const app = express();
 app.set("trust proxy", 1);
 
 // ─── CORS — FIRST middleware, sabse pehle ───
+// CORS — allow specific frontend origins
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+].filter(Boolean);
+
 const corsOptions = {
-  origin: true, // reflect request origin (dev-friendly)
+  origin: (origin, callback) => {
+    // Allow requests with no origin (Postman, curl, mobile apps)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    console.warn(`⚠️  CORS blocked: ${origin}`);
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: [
@@ -30,6 +45,8 @@ const corsOptions = {
   preflightContinue: false,
   optionsSuccessStatus: 204,
 };
+
+app.use(cors(corsOptions));
 
 // Apply CORS to ALL routes including OPTIONS preflight
 app.use(cors(corsOptions));
