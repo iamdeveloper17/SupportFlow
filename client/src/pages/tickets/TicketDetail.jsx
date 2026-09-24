@@ -20,6 +20,15 @@ export default function TicketDetail() {
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
 
+  // ✅ Helper: duplicate-safe add message
+  const addMessageSafe = (msg) => {
+    setMessages((prev) => {
+      // same _id already present? skip karo
+      if (prev.some((m) => m._id === msg._id)) return prev;
+      return [...prev, msg];
+    });
+  };
+
   useEffect(() => {
     dispatch(fetchTicket(id));
     loadMessages();
@@ -31,7 +40,8 @@ export default function TicketDetail() {
 
     const onNew = (msg) => {
       if (msg.ticket === id || msg.ticket?._id === id) {
-        setMessages((prev) => [...prev, msg]);
+        // ✅ Duplicate check use karo
+        addMessageSafe(msg);
       }
     };
     socket.on("message:new", onNew);
@@ -64,7 +74,8 @@ export default function TicketDetail() {
         content: newMessage,
         isInternalNote: isInternal,
       });
-      setMessages((prev) => [...prev, res.data.data.message]);
+      // ✅ Duplicate check use karo
+      addMessageSafe(res.data.data.message);
       setNewMessage("");
       setIsInternal(false);
     } catch (err) {
